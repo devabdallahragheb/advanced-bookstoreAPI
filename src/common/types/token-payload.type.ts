@@ -1,7 +1,7 @@
 export type AccessTokenPayload = {
-  userId: number;
+  userId: string;
 };
 
 export type RefreshTokenPayload = {
-  userId: number;
+  userId: string;
 };

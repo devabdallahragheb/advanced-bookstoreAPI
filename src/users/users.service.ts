@@ -28,7 +28,7 @@ export class UsersService {
       );
   }
 
-  async findOneById(id: number) {
+  async findOneById(id: string) {
     const user = await this.usersRepository.findOneBy({ id });
     if (user) return user;
     else
@@ -54,7 +54,7 @@ export class UsersService {
     return newUser;
   }
 
-  async updateUserById(userId: number, updatedUserData: UpdateUserDto) {
+  async updateUserById(userId: string, updatedUserData: UpdateUserDto) {
     try {
       const updatedUser = await this.usersRepository.update(
         { id: userId },
@@ -79,7 +79,7 @@ export class UsersService {
     return this.usersRepository.findOneBy({ id: userId });
   }
 
-  async setActiveRefreshToken(userId: number, refreshToken: string) {
+  async setActiveRefreshToken(userId: string, refreshToken: string) {
     const hash = createHash('sha256').update(refreshToken).digest('hex');
     const hashedRefreshToken = await bcrypt.hash(hash, 10);
     await this.usersRepository.update(userId, {
@@ -87,7 +87,7 @@ export class UsersService {
     });
   }
 
-  async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: string) {
     const user = await this.findOneById(userId);
 
     const hash = createHash('sha256').update(refreshToken).digest('hex');
@@ -103,7 +103,7 @@ export class UsersService {
     if (isRefreshTokenMatching) return user;
   }
 
-  async removeRefreshToken(userId: number) {
+  async removeRefreshToken(userId: string) {
     return this.usersRepository.update(userId, {
       hashedRefreshToken: null,
     });

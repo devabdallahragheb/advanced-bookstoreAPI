@@ -14,9 +14,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { JwtAuthenticationGuard } from '../common/guards/jwt-authentication.guard';
 import { RequestWithUser } from '../common/types/request-with-user.type';
-import { RolesGuard } from 'src/common/guards/roles.guard';
-import { Roles } from 'src/common/decorators/roles.decorator';
-import RoleType from 'src/common/constants/role-type.constant';
 import PaginationParams from 'src/common/types/pagination-params.type';
 import {
   ApiBody,
@@ -33,8 +30,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('list')
-  @UseGuards(JwtAuthenticationGuard, RolesGuard)
-  @Roles(RoleType.ADMIN)
+  @UseGuards(JwtAuthenticationGuard, )
   @ApiOperation({ summary: 'fetch all users' })
   @ApiResponse({
     status: 201,
@@ -46,8 +42,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthenticationGuard, RolesGuard)
-  @Roles(RoleType.ADMIN)
+  @UseGuards(JwtAuthenticationGuard, )
   @ApiOperation({ summary: 'delete user' })
   @ApiResponse({
     status: 200,
