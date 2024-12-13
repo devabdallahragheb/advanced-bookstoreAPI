@@ -7,12 +7,18 @@ import PostgresErrorCode from 'src/database/postgresErrorCode.enum';
 import Book from './entities/book.entity';
 import CreateBookDto from './dto/create-book.dto';
 import UpdateBookDto from './dto/update-book.dto';
+import Genre from 'src/genres/entities/genres.entity';
+import Author from 'src/authors/entities/authors.entity';
 
 @Injectable()
 export class BooksService {
   constructor(
     @InjectRepository(Book)
     private readonly booksRepository: Repository<Book>,
+    @InjectRepository(Genre)
+    private readonly genresRepository: Repository<Genre>,
+    @InjectRepository(Author)
+    private readonly authorsRepository: Repository<Author>,
   ) {}
 
   async findAll(query: PaginationParams) {
@@ -27,13 +33,43 @@ export class BooksService {
   }
 
   async create(dto: CreateBookDto) {
-    const obj = this.booksRepository.create(dto);
+    const { authorId, genreId } = dto;
+    // Fetch the book along with its related author and genre in a single query
+    const book = await this.booksRepository
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.author', 'author')
+      .leftJoinAndSelect('book.genre', 'genre')
+      .where('author.id = :authorId', { authorId })
+      .andWhere('genre.id = :genreId', { genreId })
+      .getOne();
+
+    // If book already exists (or if no book is found), handle the error
+    if (book) {
+      throw new HttpException(
+        'Book with that reference number already exists',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // If no book found, proceed with creating a new one
+    const author = await this.authorsRepository.findOne({ where: { id: authorId } });
+    if (!author) {
+      throw new HttpException(`Author with id ${authorId} not found`, HttpStatus.NOT_FOUND);
+    }
+
+    const genre = await this.genresRepository.findOne({ where: { id: genreId } });
+    if (!genre) {
+      throw new HttpException(`Genre with id ${genreId} not found`, HttpStatus.NOT_FOUND);
+    }
+
+    const newBook = this.booksRepository.create({ ...dto, author, genre });
+
     try {
-      await this.booksRepository.save(obj);
+      await this.booksRepository.save(newBook);
     } catch (error) {
       if (error?.code === PostgresErrorCode.UniqueViolation) {
         throw new HttpException(
-          'Book with that ref number already exists',
+          'Book with that reference number already exists',
           HttpStatus.BAD_REQUEST,
         );
       }
@@ -42,9 +78,9 @@ export class BooksService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    return obj;
-  }
 
+    return newBook;
+  }
   async find(id: string) {
     const book = await this.booksRepository.findOne({
       where: { id },
