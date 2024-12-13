@@ -8,7 +8,7 @@ import { GenresService } from './genres.service';
 
 @Module({
   controllers: [GenresController],
-  exports: [GenresService],
+  exports: [GenresService,TypeOrmModule],
   imports: [TypeOrmModule.forFeature([Genre]), ConfigModule],
   providers: [GenresService],
 })
