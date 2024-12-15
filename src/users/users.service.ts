@@ -1,6 +1,5 @@
 import { createHash } from 'crypto';
-
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -10,6 +9,7 @@ import { User } from './entities/user.entity';
 import PaginationParams from 'src/common/types/pagination-params.type';
 import PostgresErrorCode from 'src/database/postgresErrorCode.enum';
 import RegisterDto from 'src/auth/dto/register.dto';
+import ERROR_MESSAGES from 'src/common/enums/error.messgaes';
 
 @Injectable()
 export class UsersService {
@@ -18,26 +18,26 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
   ) {}
 
-  async findOneByEmail(email: string) {
+  // Utility method to handle user not found errors
+  private handleUserNotFoundError() {
+    throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Finds user by email
+  async findOneByEmail(email: string): Promise<User> {
     const user = await this.usersRepository.findOneBy({ email });
-    if (user) return user;
-    else
-      throw new HttpException(
-        'User with this email does not exist',
-        HttpStatus.NOT_FOUND,
-      );
+    if (!user) this.handleUserNotFoundError();
+    return user;
   }
 
-  async findOneById(id: string) {
+  // Finds user by ID
+  async findOneById(id: string): Promise<User> {
     const user = await this.usersRepository.findOneBy({ id });
-    if (user) return user;
-    else
-      throw new HttpException(
-        'User with this ID does not exist',
-        HttpStatus.NOT_FOUND,
-      );
+    if (!user) this.handleUserNotFoundError();
+    return user;
   }
 
+  // Finds all users with pagination
   async findAll(query: PaginationParams) {
     const { limit, offset } = query;
     const [items, count] = await this.usersRepository.findAndCount({
@@ -48,68 +48,66 @@ export class UsersService {
     return { count, items };
   }
 
-  async create(userData: RegisterDto) {
+  // Create a new user
+  async create(userData: RegisterDto): Promise<User> {
     const newUser = this.usersRepository.create(userData);
-    await this.usersRepository.save(newUser);
-    return newUser;
-  }
-
-  async updateUserById(userId: string, updatedUserData: UpdateUserDto) {
     try {
-      const updatedUser = await this.usersRepository.update(
-        { id: userId },
-        updatedUserData,
-      );
-      const isUpdated = Boolean(updatedUser.affected);
-      if (!isUpdated)
-        throw new HttpException('User was not found.', HttpStatus.NOT_FOUND);
+      await this.usersRepository.save(newUser);
     } catch (error) {
       if (error?.code === PostgresErrorCode.UniqueViolation) {
         throw new HttpException(
-          'User with that email or phone already exists',
+          ERROR_MESSAGES.USER_EXIST,
           HttpStatus.BAD_REQUEST,
         );
       }
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(ERROR_MESSAGES.DATABASE_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    return newUser;
+  }
+
+  // Update user by ID
+  async updateUserById(userId: string, updatedUserData: UpdateUserDto): Promise<User> {
+    const result = await this.usersRepository.update(userId, updatedUserData);
+    if (!result.affected) this.handleUserNotFoundError();
 
     return this.usersRepository.findOneBy({ id: userId });
   }
 
-  async setActiveRefreshToken(userId: string, refreshToken: string) {
-    const hash = createHash('sha256').update(refreshToken).digest('hex');
-    const hashedRefreshToken = await bcrypt.hash(hash, 10);
-    await this.usersRepository.update(userId, {
-      hashedRefreshToken,
-    });
+  // Set hashed refresh token for the user
+  async setActiveRefreshToken(userId: string, refreshToken: string): Promise<void> {
+    const hashedRefreshToken = await this.hashRefreshToken(refreshToken);
+    await this.usersRepository.update(userId, { hashedRefreshToken });
   }
 
-  async getUserIfRefreshTokenMatches(refreshToken: string, userId: string) {
+  // Compare and validate refresh token
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: string): Promise<User> {
     const user = await this.findOneById(userId);
-
-    const hash = createHash('sha256').update(refreshToken).digest('hex');
-
-    if (!user.hashedRefreshToken)
-      throw new HttpException('User was not found.', HttpStatus.NOT_FOUND);
+    if (!user.hashedRefreshToken) {
+      this.handleUserNotFoundError();
+    }
 
     const isRefreshTokenMatching = await bcrypt.compare(
-      hash,
+      await this.hashRefreshToken(refreshToken),
       user.hashedRefreshToken,
     );
 
     if (isRefreshTokenMatching) return user;
+    throw new HttpException('Refresh token does not match', HttpStatus.FORBIDDEN);
   }
 
-  async removeRefreshToken(userId: string) {
-    return this.usersRepository.update(userId, {
-      hashedRefreshToken: null,
-    });
+  // Remove refresh token for user
+  async removeRefreshToken(userId: string): Promise<void> {
+    await this.usersRepository.update(userId, { hashedRefreshToken: null });
   }
 
-  async deleteOneById(userId: number) {
+  // Soft delete user by ID
+  async deleteOneById(userId: number): Promise<void> {
     await this.usersRepository.softDelete(userId);
+  }
+
+  // Utility method to hash the refresh token
+  private async hashRefreshToken(refreshToken: string): Promise<string> {
+    const hash = createHash('sha256').update(refreshToken).digest('hex');
+    return bcrypt.hash(hash, 10);
   }
 }

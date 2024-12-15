@@ -4,9 +4,11 @@ import { Repository } from 'typeorm';
 
 import PaginationParams from 'src/common/types/pagination-params.type';
 import PostgresErrorCode from 'src/database/postgresErrorCode.enum';
-import  { Author } from './entities/authors.entity';
-import  { CreateAuthorDto } from './dto/create-author.dto';
-import   { UpdateAuthorDto } from './dto/update-author.dto';
+import { Author } from './entities/authors.entity';
+import { CreateAuthorDto } from './dto/create-author.dto';
+import { UpdateAuthorDto } from './dto/update-author.dto';
+import Authors_ERROR_MESSAGES, { AUTHORS_ERROR_MESSAGES } from './enums/authors.error';
+import ERROR_MESSAGES from 'src/common/enums/error.messgaes';
 
 @Injectable()
 export class AuthorsService {
@@ -15,8 +17,10 @@ export class AuthorsService {
     private readonly authorsRepository: Repository<Author>,
   ) {}
 
+  // Fetch all authors with pagination
   async findAll(query: PaginationParams) {
     const { limit, offset } = query;
+
     const [items, count] = await this.authorsRepository.findAndCount({
       skip: offset,
       take: limit,
@@ -25,58 +29,76 @@ export class AuthorsService {
     return { count, items };
   }
 
+  // Create a new author
   async create(dto: CreateAuthorDto) {
-    const obj = this.authorsRepository.create(dto);
+    await this.ensureAuthorDoesNotExist(dto.name);
+
+    const author = this.authorsRepository.create(dto);
     try {
-      await this.authorsRepository.save(obj);
+      await this.authorsRepository.save(author);
+      return author;
     } catch (error) {
-      if (error?.code === PostgresErrorCode.UniqueViolation) {
-        throw new HttpException(
-          'author with that ref number already exists',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.handleDatabaseError(error);
     }
-    return obj;
   }
 
-  async find(id: string) {
+  // Find author by ID
+  async findByID(id: string) {
     const author = await this.authorsRepository.findOneBy({ id });
     if (!author) {
-      throw new HttpException('author was not found.', HttpStatus.NOT_FOUND);
+      throw new HttpException(Authors_ERROR_MESSAGES.AUTHORS_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
-
     return author;
   }
 
+  // Update author details
   async update(id: string, dto: UpdateAuthorDto) {
-    try {
-      const updatedAuthor = await this.authorsRepository.update({ id }, dto);
-      const isUpdated = Boolean(updatedAuthor.affected);
+    const author = await this.authorsRepository.preload({
+      id,
+      ...dto,
+    });
 
-      if (!isUpdated)
-        throw new HttpException('Author was not found.', HttpStatus.NOT_FOUND);
-    } catch (error) {
-      if (error?.code === PostgresErrorCode.UniqueViolation) {
-        throw new HttpException(
-          'Author with that ref number already exists',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    if (!author) {
+      throw new HttpException(Authors_ERROR_MESSAGES.AUTHORS_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
-    return this.authorsRepository.findOneBy({ id });
+    return this.saveAuthor(author);
   }
 
-  async deleteOneById(userId: number) {
-    await this.authorsRepository.softDelete(userId);
+  // Soft delete author by ID
+  async deleteOneById(authorId: string) {
+    const result = await this.authorsRepository.softDelete(authorId);
+
+    if (!result.affected) {
+      throw new HttpException(AUTHORS_ERROR_MESSAGES.AUTHORS_NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  // Ensure an author with a given name doesn't already exist
+  private async ensureAuthorDoesNotExist(name: string) {
+    const existingAuthor = await this.authorsRepository.findOne({
+      where: { name },
+    });
+
+    if (existingAuthor) {
+      throw new HttpException(AUTHORS_ERROR_MESSAGES.AUTHORS_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  // Save an author and handle any database errors
+  private async saveAuthor(author: Author) {
+    try {
+      return await this.authorsRepository.save(author);
+    } catch (error) {
+      this.handleDatabaseError(error);
+    }
+  }
+
+  // Handle common database errors
+  private handleDatabaseError(error: any) {
+    if (error?.code === PostgresErrorCode.UniqueViolation) {
+      throw new HttpException(AUTHORS_ERROR_MESSAGES.UNIQUE_VIOLATION, HttpStatus.BAD_REQUEST);
+    }
+    throw new HttpException(ERROR_MESSAGES.UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

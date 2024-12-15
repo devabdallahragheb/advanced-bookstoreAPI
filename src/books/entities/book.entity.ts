@@ -19,7 +19,7 @@ export class Book extends BaseEntity {
   @JoinColumn({ name: 'authorId' })
   author: Author;
   
-  @ManyToOne(() => Genre, (genre) => genre.books, { eager: true })
+  @ManyToOne(() => Genre, (genre) => genre.books, { eager: true , onDelete: 'CASCADE' })
   @JoinColumn({ name: 'genreId' })
   genre: Genre;
   
