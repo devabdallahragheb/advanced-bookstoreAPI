@@ -10,9 +10,11 @@ be able to search for books by title, author, or genre.
 - User CRUD operations
 - Authentication
 ## Requirements
-- Node.js and npm/yarn installed
-- PostgreSQL (or any other supported database) installed and running
-- Redis
+- Use Node.js with the NestJS framework.
+- Use TypeScript as the programming language.
+- Utilize a relational database (PostgreSQL or MySQL).
+- Use TypeORM or Prisma for database interactions.
+- Implement authentication and authorization using JWT
   
 ## Getting Started
 1.Clone the repository:
