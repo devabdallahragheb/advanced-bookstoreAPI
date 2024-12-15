@@ -43,6 +43,8 @@ export class AuthController {
   })
   @ApiBody({ type: RegisterDto })
   async register(@Body() registrationData: RegisterDto) {
+    console.log(registrationData);
+    
     const user = await this.authService.register(registrationData);
 
     const accessToken = this.authService.getJwtAccessToken(user);

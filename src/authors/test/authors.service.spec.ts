@@ -64,13 +64,15 @@ describe('AuthorsService', () => {
       const createAuthorDto: CreateAuthorDto = {
         name: 'Abdullah Abdelglil',
         biography: 'Author from Alexandria with many certificates.',
-        birthDate: new Date('1990-01-20'),
+        birthDate: new Date('1990-01-20')
+        ,createdBy:"cb1e5729-0293-4605-83ae-b2cfac8c2b99"
+        
       };
       mockAuthorRepository.findOne.mockResolvedValue(null);
       mockAuthorRepository.create.mockReturnValue(mockAuthor);
       mockAuthorRepository.save.mockResolvedValue(mockAuthor);
 
-      const result = await service.create(createAuthorDto);
+      const result = await service.create(createAuthorDto,"'cb1e5729-0293-4605-83ae-b2cfac8c2b99'");
 
       expect(result).toEqual(mockAuthor);
       expect(mockAuthorRepository.save).toHaveBeenCalledWith(mockAuthor);
@@ -81,10 +83,11 @@ describe('AuthorsService', () => {
         name: 'Abdullah Abdelglil',
         biography: 'Author from Alexandria with many certificates.',
         birthDate: new Date('1990-01-20'),
+        createdBy:'cb1e5729-0293-4605-83ae-b2cfac8c2b99'
       };
       mockAuthorRepository.findOne.mockResolvedValue(mockAuthor);
     
-      await expect(service.create(createAuthorDto)).rejects.toThrowError(
+      await expect(service.create(createAuthorDto,'cb1e5729-0293-4605-83ae-b2cfac8c2b99')).rejects.toThrowError(
         new HttpException(
           AUTHORS_ERROR_MESSAGES.AUTHORS_ALREADY_EXISTS,  // Match the message in your constant
           HttpStatus.BAD_REQUEST,

@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.1",
+    "@nestjs/bull": "^10.2.3",
     "@nestjs/cache-manager": "^2.3.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",
@@ -39,6 +40,7 @@
     "@nestjs/typeorm": "^9.0.1",
     "axios": "^1.6.2",
     "bcrypt": "^5.1.0",
+    "bull": "^4.16.4",
     "cache-manager": "^5.7.6",
     "cache-manager-redis-store": "^3.0.1",
     "class-transformer": "^0.5.1",
@@ -48,6 +50,7 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "pg": "^8.10.0",
+    "redis": "^4.7.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "typeorm": "^0.3.15",

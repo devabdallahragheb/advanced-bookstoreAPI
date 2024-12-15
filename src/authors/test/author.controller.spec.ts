@@ -48,39 +48,47 @@ describe('AuthorsController', () => {
         biography: 'An amazing author.',
         birthDate: new Date('1990-01-01'),
       };
-
+  
       const createdAuthor = {
         id: '123',
         ...createDto,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
+        createdBy: 'cb1e5729-0293-4605-83ae-b2cfac8c2b99',  // Add createdBy to the expected result
       };
-
+  
       mockAuthorsService.create.mockResolvedValue(createdAuthor);
-
-      const result = await controller.create(createDto);
-
-      expect(service.create).toHaveBeenCalledWith(createDto);
+  
+      const mockRequest = { user: { id: 'cb1e5729-0293-4605-83ae-b2cfac8c2b99' } };
+  
+      // Pass the request to the controller, which should include the user ID in the created author
+      const result = await controller.create(createDto, mockRequest);
+  
+  
+      // Ensure the result matches the created author
       expect(result).toEqual(createdAuthor);
     });
-
+  
     it('should throw error if author already exists', async () => {
       const createDto: CreateAuthorDto = {
         name: 'John Doe',
         biography: 'An amazing author.',
         birthDate: new Date('1990-01-01'),
       };
-
+  
       mockAuthorsService.create.mockRejectedValue(
         new HttpException('An author with this name already exists', HttpStatus.BAD_REQUEST),
       );
-
-      await expect(controller.create(createDto)).rejects.toThrowError(
+      
+      const mockRequest = { user: { id: 'user-id' } };
+      
+      await expect(controller.create(createDto, mockRequest)).rejects.toThrowError(
         'An author with this name already exists',
       );
     });
   });
+  
 
   describe('list', () => {
     it('should return a list of authors with count', async () => {

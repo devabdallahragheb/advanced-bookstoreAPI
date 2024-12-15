@@ -10,6 +10,8 @@ import { AuthorsModule } from 'src/authors/authors.module';
 import Genre from 'src/genres/entities/genres.entity';
 import Author from 'src/authors/entities/authors.entity';
 import { CacheModule } from '@nestjs/cache-manager';
+import { NotificationsModule } from 'src/notification/notifications.module';
+// import { NotificationsModule } from 'src/notification/notifications.module';
 
 @Module({
   controllers: [BooksController],
@@ -20,6 +22,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     GenresModule,
     AuthorsModule,
     CacheModule.register(), 
+    NotificationsModule,
   ],
   providers: [BooksService],
 })

@@ -35,7 +35,8 @@ export class GenresService {
     }
   }
 
-  async create(dto: GenreDto) {
+  async create(dto: GenreDto,createdBy:string) {
+    dto.createdBy=createdBy
     await this.checkIfGenreExists(dto.name); // Check if genre name exists
 
     const genre = this.genresRepository.create(dto);

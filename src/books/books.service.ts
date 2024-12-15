@@ -12,6 +12,8 @@ import ERROR_MESSAGES from 'src/common/enums/error.messgaes';
 import BOOK_ERROR_MESSAGES from './enums/books.error';
 import GENRE_ERROR_MESSAGES from 'src/genres/enums/genres.error';
 import AUTHORS_ERROR_MESSAGES from 'src/authors/enums/authors.error';
+import { Queue } from 'bull';
+import { InjectQueue } from '@nestjs/bull';
 
 @Injectable()
 export class BooksService {
@@ -23,6 +25,7 @@ export class BooksService {
     @InjectRepository(Author)
     private readonly authorsRepository: Repository<Author>,
     @Inject(Cache) private readonly cacheManager: Cache,   
+    @InjectQueue('notifications') private readonly notificationsQueue: Queue,
   ) {}
 
   async findAll({ limit, offset }: PaginationParams) {
@@ -59,14 +62,16 @@ export class BooksService {
       });
 
       await this.cacheManager.set(cacheKey, book);
+    
       return book;
     } catch (error) {
       // Return null if book is not found
-      return null;
+      throw new HttpException(BOOK_ERROR_MESSAGES.BOOK_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
   }
 
-  async create(dto: CreateBookDto) {
+  async create(dto: CreateBookDto,createdBy:string) {
+    dto.createdBy=createdBy
     const { authorId, genreId } = dto;
 
     const [author, genre] = await this.validateAuthorAndGenre(authorId, genreId);
@@ -75,7 +80,13 @@ export class BooksService {
 
     try {
       await this.booksRepository.save(newBook);
-      await this.invalidateCache();  // Invalidate cache after creating a book
+     // Invalidate cache after creating a book
+       this.invalidateCache(); 
+      //we send notification to user created the book 
+       this.notificationsQueue.add('sendNotification', {
+        bookTitle: newBook.title,
+        userId: newBook.createdBy, 
+      });
       return newBook;
     } catch (error) {
       throw new HttpException(ERROR_MESSAGES.DATABASE_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);

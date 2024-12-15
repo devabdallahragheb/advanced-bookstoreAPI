@@ -21,7 +21,7 @@ describe('GenresService', () => {
     softDelete: jest.fn(),
   };
 
-  const genreDto: GenreDto = { name: 'Test Genre' };
+  const genreDto: GenreDto = { name: 'Test Genre' ,createdBy:'cb1e5729-0293-4605-83ae-b2cfac8c2b99'};
   const genre = { id: '1', name: 'Test Genre' };
 
   beforeEach(async () => {
@@ -44,7 +44,7 @@ describe('GenresService', () => {
       mockGenreRepository.findOne.mockResolvedValue(null); // No genre with the same name
       mockGenreRepository.save.mockResolvedValue({ ...genreDto, id: '1' });
 
-      const result = await service.create(genreDto);
+      const result = await service.create(genreDto,'cb1e5729-0293-4605-83ae-b2cfac8c2b99');
 
       expect(result).toEqual({ ...genreDto, id: '1' });
       expect(mockGenreRepository.save).toHaveBeenCalled();
@@ -53,14 +53,14 @@ describe('GenresService', () => {
     it('should throw error if genre already exists', async () => {
       mockGenreRepository.findOne.mockResolvedValue({ name: 'Test Genre' });
 
-      await expect(service.create(genreDto)).rejects.toThrowError(new HttpException('A genre with this name already exists', HttpStatus.BAD_REQUEST));
+      await expect(service.create(genreDto,"'cb1e5729-0293-4605-83ae-b2cfac8c2b99'")).rejects.toThrowError(new HttpException('A genre with this name already exists', HttpStatus.BAD_REQUEST));
     });
 
     it('should throw error if something goes wrong during creation', async () => {
       mockGenreRepository.findOne.mockResolvedValue(null);
       mockGenreRepository.save.mockRejectedValue(new Error('Database error'));
 
-      await expect(service.create(genreDto)).rejects.toThrowError(new HttpException(ERROR_MESSAGES.DATABASE_ERROR, HttpStatus.INTERNAL_SERVER_ERROR));
+      await expect(service.create(genreDto,'cb1e5729-0293-4605-83ae-b2cfac8c2b99')).rejects.toThrowError(new HttpException(ERROR_MESSAGES.DATABASE_ERROR, HttpStatus.INTERNAL_SERVER_ERROR));
     });
   });
 
@@ -83,16 +83,17 @@ describe('GenresService', () => {
 
   describe('update', () => {
     it('should update and return the genre', async () => {
-      const updatedGenre = { ...genre, name: 'Updated Genre' };
+      const updatedGenre = { ...genre, name: 'Updated Genre', createdBy: 'cb1e5729-0293-4605-83ae-b2cfac8c2b99' };
       mockGenreRepository.preload.mockResolvedValue(updatedGenre);
       mockGenreRepository.save.mockResolvedValue(updatedGenre);
-
-      const result = await service.update('1', { name: 'Updated Genre' });
-
+    
+      const result = await service.update('1', { name: 'Updated Genre', createdBy: 'cb1e5729-0293-4605-83ae-b2cfac8c2b99' });
+    
       expect(result).toEqual(updatedGenre);
-      expect(mockGenreRepository.preload).toHaveBeenCalledWith({ id: '1', name: 'Updated Genre' });
+      expect(mockGenreRepository.preload).toHaveBeenCalledWith({ id: '1', name: 'Updated Genre', createdBy: 'cb1e5729-0293-4605-83ae-b2cfac8c2b99' });
       expect(mockGenreRepository.save).toHaveBeenCalled();
     });
+    
 
     it('should throw error if genre not found during update', async () => {
       mockGenreRepository.preload.mockResolvedValue(null);
@@ -104,7 +105,7 @@ describe('GenresService', () => {
       mockGenreRepository.preload.mockResolvedValue(genre);
       mockGenreRepository.save.mockRejectedValue(new Error('Database error'));
 
-      await expect(service.update('1', { name: 'Updated Genre' })).rejects.toThrowError(new HttpException(ERROR_MESSAGES.DATABASE_ERROR, HttpStatus.INTERNAL_SERVER_ERROR));
+      await expect(service.update('1', { name: 'Updated Genre' ,createdBy:'cb1e5729-0293-4605-83ae-b2cfac8c2b99'})).rejects.toThrowError(new HttpException(ERROR_MESSAGES.DATABASE_ERROR, HttpStatus.INTERNAL_SERVER_ERROR));
     });
   });
 

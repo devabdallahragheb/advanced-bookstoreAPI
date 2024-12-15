@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   HttpStatus,
+  Request
 } from '@nestjs/common';
 import { JwtAuthenticationGuard } from '../common/guards/jwt-authentication.guard';
 import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -27,8 +28,8 @@ export class AuthorsController {
   @ApiOperation({ summary: 'Create a new author' })
   @ApiResponse({ status: HttpStatus.CREATED, description: 'Return created author object' })
   @ApiBody({ type: CreateAuthorDto })
-  async create(@Body() dto: CreateAuthorDto) {
-    return this.authorsService.create(dto);
+  async create(@Body() dto: CreateAuthorDto,@Request() req) {
+    return this.authorsService.create(dto, req.user.id);
   }
 
   @Get()
