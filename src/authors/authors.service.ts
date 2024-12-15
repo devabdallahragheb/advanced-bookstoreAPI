@@ -30,7 +30,8 @@ export class AuthorsService {
   }
 
   // Create a new author
-  async create(dto: CreateAuthorDto) {
+  async create(dto: CreateAuthorDto,createdBy:string) {
+    dto.createdBy=createdBy
     await this.ensureAuthorDoesNotExist(dto.name);
 
     const author = this.authorsRepository.create(dto);

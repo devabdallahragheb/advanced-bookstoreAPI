@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Request
 } from '@nestjs/common';
 
 import { JwtAuthenticationGuard } from '../common/guards/jwt-authentication.guard';
@@ -36,8 +37,8 @@ export class GenresController {
     description: 'Genre successfully created',
   })
   @ApiBody({ type: GenreDto })
-  async create(@Body() dto: GenreDto) {
-    return this.genresService.create(dto);
+  async create(@Body() dto: GenreDto,@Request() req) {
+    return this.genresService.create(dto, req.user.id);
   }
 
   @Get()

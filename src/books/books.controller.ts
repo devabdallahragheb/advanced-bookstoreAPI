@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Body, Query, Delete, Param, Post, Put } from '@nestjs/common';
+import { Controller, Get, UseGuards, Body, Query, Delete, Param, Post, Put ,Request} from '@nestjs/common';
 import { BooksService } from './books.service';
 import { JwtAuthenticationGuard } from '../common/guards/jwt-authentication.guard';
 import PaginationParams from 'src/common/types/pagination-params.type';
@@ -16,8 +16,8 @@ export class BooksController {
   @ApiOperation({ summary: 'Create a new book' })
   @ApiResponse({ status: 201, description: 'Book created successfully.' })
   @ApiBody({ type: CreateBookDto })
-  async create(@Body() dto: CreateBookDto) {
-    return this.booksService.create(dto);
+  async create(@Body() dto: CreateBookDto,@Request() req) {
+    return this.booksService.create(dto, req.user.id);
   }
 
   @Get()

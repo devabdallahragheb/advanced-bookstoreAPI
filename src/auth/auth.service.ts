@@ -26,12 +26,15 @@ export class AuthService {
 
   public async register(registrationData: RegisterDto) {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
+    console.log(hashedPassword);
+    
     try {
+      
       const createdUser = await this.usersService.create({
         ...registrationData,
         password: hashedPassword,
       });
-
+ 
       return createdUser;
     } catch (error) {
       if (error?.code === PostgresErrorCode.UniqueViolation) {
@@ -40,6 +43,7 @@ export class AuthService {
           HttpStatus.BAD_REQUEST,
         );
       }
+      console.error("Error creating user:", error);
       throw new HttpException(
         ERROR_MESSAGES.DATABASE_ERROR,
         HttpStatus.INTERNAL_SERVER_ERROR,

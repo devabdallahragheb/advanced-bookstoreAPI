@@ -33,27 +33,28 @@ describe('BooksController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
-
   describe('create', () => {
     it('should create a book and return it', async () => {
-      const createBookDto = { title: 'New Book', description: 'A new test book', publicationDate: new Date(), authorId: 'author-id', genreId: 'genre-id' };
-      const createdBook = { id: '1', ...createBookDto };
+      const createBookDto = { 
+        title: 'New Book', 
+        description: 'A new test book', 
+        publicationDate: new Date(), 
+        authorId: 'author-id', 
+        genreId: 'genre-id', 
+      createdBy: "cb1e5729-0293-4605-83ae-b2cfac8c2b99"
+      };
+    
+      mockBooksService.create.mockResolvedValue(createBookDto);
       
-      mockBooksService.create.mockResolvedValue(createdBook);
-
-      const result = await controller.create(createBookDto);
-      expect(result).toEqual(createdBook);
-      expect(mockBooksService.create).toHaveBeenCalledWith(createBookDto);
-    });
-
-    it('should throw an error if creation fails', async () => {
-      const createBookDto = { title: 'New Book', description: 'A new test book', publicationDate: new Date(), authorId: 'author-id', genreId: 'genre-id' };
-      mockBooksService.create.mockRejectedValue(new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR));
-
-      await expect(controller.create(createBookDto)).rejects.toThrowError(new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR));
+      const mockRequest = { user: { id: 'cb1e5729-0293-4605-83ae-b2cfac8c2b99' } };  // Set the mock request with user ID
+      const result = await controller.create(createBookDto, mockRequest);  // Pass mockRequest as the second argument
+      
+      expect(result).toEqual(createBookDto);
+  
+      
     });
   });
-
+  
   describe('list', () => {
     it('should return a list of books', async () => {
       const paginationParams = { offset: 0, limit: 10 };

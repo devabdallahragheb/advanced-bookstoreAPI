@@ -9,6 +9,7 @@ import { AuthorsModule } from './authors/authors.module';
 import { GenresModule } from './genres/genres.module';
 import DatabaseModule from './database/database.module';
 import RedisModule from './database/redis.module';
+import { NotificationsModule } from './notification/notifications.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate }),
@@ -18,7 +19,8 @@ import RedisModule from './database/redis.module';
     GenresModule,
     CommonModule,
     DatabaseModule,
-    RedisModule
+    RedisModule,
+    NotificationsModule
     
   ],
   controllers: [],

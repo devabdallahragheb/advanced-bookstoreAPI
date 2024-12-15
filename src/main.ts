@@ -24,16 +24,16 @@ async function bootstrap() {
   });
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Books Management API documentation')
-    .setDescription('Books Management Backend RESTful API documentation.')
+    .setTitle('Advanced Bookstore API API documentation')
+    .setDescription('Advanced Bookstore API Backend RESTful API documentation.')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-
+//for swagger
   SwaggerModule.setup('api-docs', app, document);
-
+//openapi
   app.getHttpAdapter().get('/api-docs-json', (req, res) => {
     res.json(document);
   });
