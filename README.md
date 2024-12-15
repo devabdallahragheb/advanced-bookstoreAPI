@@ -39,13 +39,13 @@ git clone https://pages.github.com/](https://github.com/devabdallahragheb/advanc
   "address": "test",
   "phone": "+201224823098"
 }'
-2-// for create new genres curl --location 'http://localhost:3000/api/v1/genres' \
+2. // for create new genres curl --location 'http://localhost:3000/api/v1/genres' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0NzgwZjZiYS1jMDlkLTQ0OGUtYjczMS1lZDQ1ZDQzMTdiYWQiLCJpYXQiOjE3MzQyOTMxNzQsImV4cCI6MTczNDM3OTU3NH0.rKZdJYsiETbUa9leMbjlRg5RDgBHJmOv2SMkeNm4El8' \
 --data '{
   "name": "action"
 }'
-3- // for new authors curl --location 'http://localhost:3000/api/v1/authors' \
+3. // for new authors curl --location 'http://localhost:3000/api/v1/authors' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0NzgwZjZiYS1jMDlkLTQ0OGUtYjczMS1lZDQ1ZDQzMTdiYWQiLCJpYXQiOjE3MzQyOTMxNzQsImV4cCI6MTczNDM3OTU3NH0.rKZdJYsiETbUa9leMbjlRg5RDgBHJmOv2SMkeNm4El8' \
 --data '{
@@ -53,7 +53,7 @@ git clone https://pages.github.com/](https://github.com/devabdallahragheb/advanc
   "biography": "have certificate",
    "birthDate": "1990-01-20T00:00:00.000Z"
 }'
-// for new book curl --location 'http://localhost:3000/api/v1/books' \
+4. // for new book curl --location 'http://localhost:3000/api/v1/books' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0NzgwZjZiYS1jMDlkLTQ0OGUtYjczMS1lZDQ1ZDQzMTdiYWQiLCJpYXQiOjE3MzQyOTMxNzQsImV4cCI6MTczNDM3OTU3NH0.rKZdJYsiETbUa9leMbjlRg5RDgBHJmOv2SMkeNm4El8' \
 --data '{
