@@ -1,3 +1,5 @@
+
+// in this file we can use commman error we need use in application 
 export enum  ERROR_MESSAGES {
      DATABASE_ERROR= 'Something went wrong',
      UNEXPECTED_ERROR='An unexpected error occurred',

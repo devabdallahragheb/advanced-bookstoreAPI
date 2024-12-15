@@ -43,15 +43,10 @@ export class AuthController {
   })
   @ApiBody({ type: RegisterDto })
   async register(@Body() registrationData: RegisterDto) {
-    console.log(registrationData);
-    
     const user = await this.authService.register(registrationData);
-
     const accessToken = this.authService.getJwtAccessToken(user);
     const refreshToken = this.authService.getJwtRefreshToken(user);
-
     await this.usersService.setActiveRefreshToken(user.id, refreshToken);
-
     return { user, tokens: { refresh: refreshToken, access: accessToken } };
   }
 
@@ -66,12 +61,9 @@ export class AuthController {
   @ApiBody({ type: LogInDto })
   async logIn(@Req() request: RequestWithUser) {
     const { user } = request;
-
     const accessToken = this.authService.getJwtAccessToken(user);
     const refreshToken = this.authService.getJwtRefreshToken(user);
-
     await this.usersService.setActiveRefreshToken(user.id, refreshToken);
-
     return { user, tokens: { refresh: refreshToken, access: accessToken } };
   }
 

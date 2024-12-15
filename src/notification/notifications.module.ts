@@ -10,6 +10,6 @@ import { NotificationsProcessor } from './notifications.processor';
     }),
   ],
   providers: [NotificationsService, NotificationsProcessor],
-  exports: [BullModule],  // Export BullModule to make the queue available in other modules
+  exports: [BullModule],  
 })
 export class NotificationsModule {}

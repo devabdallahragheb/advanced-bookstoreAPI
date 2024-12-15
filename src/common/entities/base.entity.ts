@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
+// is base entity more power for oop
 export class BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

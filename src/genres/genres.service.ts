@@ -9,7 +9,6 @@ import GenreDto from './dto/genre.dto';
 import GENRE_ERROR_MESSAGES from './enums/genres.error';
 import ERROR_MESSAGES from 'src/common/enums/error.messgaes';
 
-// Constants for error messages to ensure consistency
 
 @Injectable()
 export class GenresService {
@@ -19,6 +18,7 @@ export class GenresService {
   ) {}
 
   async findAll(query: PaginationParams) {
+    //may be use paginitaion for performance
     const { limit, offset } = query;
     const [items, count] = await this.genresRepository.findAndCount({
       skip: offset,
@@ -58,7 +58,7 @@ export class GenresService {
     }
     return this.saveGenre(genre);
   }
-
+// softdelete is more efficent 
   async deleteOneById(id: string): Promise<void> {
     const result = await this.genresRepository.softDelete(id);
 

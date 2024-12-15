@@ -14,7 +14,8 @@ export class NotificationsProcessor {
 
     // Use NotificationsService to send the notification
     await this.notificationsService.sendNotification(bookTitle, userId);
-
+// this is customize messgae 
     console.log(`Notification for book "${bookTitle}" sent to user ${userId}`);
   }
+  // in general notification used observal pattern 
 }

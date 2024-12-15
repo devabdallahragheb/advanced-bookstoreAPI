@@ -52,8 +52,6 @@ export class UsersService {
   async create(userData: RegisterDto): Promise<User> {
     const newUser = this.usersRepository.create(userData);
     try {
-      console.log("new user ", newUser);
-      
       await this.usersRepository.save(newUser);
     } catch (error) {
       if (error?.code === PostgresErrorCode.UniqueViolation) {

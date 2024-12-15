@@ -6,6 +6,15 @@ import { BooksService } from '../books.service';
 import Book from '../entities/book.entity';
 import Genre from 'src/genres/entities/genres.entity';
 import Author from 'src/authors/entities/authors.entity';
+import { Queue } from 'bull';  // Import Queue from bull
+import { InjectQueue } from '@nestjs/bull';
+
+// Mock for BullQueue_notifications
+const mockBullQueue = {
+  add: jest.fn(), // Mock the add method that queues notifications
+  on: jest.fn(),
+  process: jest.fn(),
+};
 
 describe('BooksService with Caching', () => {
   let service: BooksService;
@@ -19,13 +28,17 @@ describe('BooksService with Caching', () => {
     create: jest.fn(),
     softDelete: jest.fn(),
   };
-
+  const mockAuthorsRepository = {
+    findOne: jest.fn(), // Mock the findOne method for authors
+  };
   const mockCacheManager = {
     get: jest.fn(),
     set: jest.fn(),
     del: jest.fn(),
   };
-
+  const mockGenresRepository = {
+    findOne: jest.fn(), // Mock the findOne method for genres
+  };
   const books = [
     { id: '1', title: 'Book 1', genre: {}, author: {} },
     { id: '2', title: 'Book 2', genre: {}, author: {} },
@@ -51,6 +64,10 @@ describe('BooksService with Caching', () => {
           provide: Cache,
           useValue: mockCacheManager,
         },
+        {
+          provide: 'BullQueue_notifications',  // Mock the Bull queue provider
+          useValue: mockBullQueue,
+        },
       ],
     }).compile();
 
@@ -65,7 +82,6 @@ describe('BooksService with Caching', () => {
 
       mockCacheManager.get.mockResolvedValue(cachedResult);
 
-      // Explicitly assert the type of the result
       const result = (await service.findAll({ limit: 10, offset: 0 })) as {
         items: Book[];
         count: number;
@@ -74,6 +90,7 @@ describe('BooksService with Caching', () => {
       expect(result.items).toEqual(books);
       expect(result.count).toEqual(books.length);
     });
+
     it('should fetch books from the database if cache is empty', async () => {
       mockCacheManager.get.mockResolvedValue(null);
       mockBooksRepository.findAndCount.mockResolvedValue([books, books.length]);
@@ -90,9 +107,30 @@ describe('BooksService with Caching', () => {
         count: books.length,
       });
     });
-  
   });
 
+  // describe('create', () => {
+  //   it('should create a new book and add a notification to the queue', async () => {
+  //     const createBookDto = { title: 'New Book', authorId: '1', genreId: '1', description: 'abdullah cv', publicationDate: new Date() };
+  //     const createdBy = 'user1';
+
+  //     // Mock the responses for the repositories
+  //     mockAuthorsRepository.findOne.mockResolvedValue({ id: '1', name: 'Author Name' });
+  //     mockGenresRepository.findOne.mockResolvedValue({ id: '1', name: 'Genre Name' });
+
+  //     mockBooksRepository.create.mockReturnValue({ ...createBookDto, createdBy });
+  //     mockBooksRepository.save.mockResolvedValue({ ...createBookDto, createdBy });
+
+  //     const result = await service.create(createBookDto, createdBy);
+
+  //     expect(result.title).toEqual(createBookDto.title);
+  //     expect(mockBullQueue.add).toHaveBeenCalledWith('sendNotification', {
+  //       bookTitle: result.title,
+  //       userId: createdBy,
+  //     });
+  //     expect(mockCacheManager.del).toHaveBeenCalled();  // Ensure cache invalidation
+  //   });
+  // });
   describe('findByID', () => {
     it('should return a book from cache if available', async () => {
       mockCacheManager.get.mockResolvedValue(books[0]);
