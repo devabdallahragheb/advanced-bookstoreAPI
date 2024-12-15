@@ -12,6 +12,7 @@ import UpdateAuthorDto from '../dto/update-author.dto';
 import PaginationParams from 'src/common/types/pagination-params.type';
 import { Repository } from 'typeorm';
 
+// vip we have a multi way to use integration test  but in this app i use the same db   but it's not good way  i use it for save  time only i prefed to use In-memory databases
 // Mock JwtAuthenticationGuard
 jest.mock('../../common/guards/jwt-authentication.guard', () => ({
   JwtAuthenticationGuard: jest.fn().mockImplementation(() => ({

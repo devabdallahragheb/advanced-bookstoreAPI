@@ -12,6 +12,7 @@ import Genre from '../../genres/entities/genres.entity';
 import CreateBookDto from '../dto/create-book.dto';
 import { JwtAuthenticationGuard } from '../../common/guards/jwt-authentication.guard';
 import UpdateBookDto from '../dto/update-book.dto';
+// vip we have a multi way to use integration test  but in this app i use the same db   but it's not good way  i use it for save  time only i prefed to use In-memory databases
 
 jest.mock('../../common/guards/jwt-authentication.guard', () => ({
   JwtAuthenticationGuard: jest.fn().mockImplementation(() => ({
