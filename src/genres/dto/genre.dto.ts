@@ -5,6 +5,6 @@ export class  GenreDto {
   @IsString()
   @IsOptional()
   @ApiProperty({ example: 'drama', description: 'the genre name' })
-  name: string;
+  name?: string;
 }
 export default GenreDto;

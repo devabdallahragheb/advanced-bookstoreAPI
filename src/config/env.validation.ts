@@ -6,8 +6,8 @@ import {
   IsString,
   validateSync,
 } from 'class-validator';
+import Environment from 'src/common/enums/environment.type';
 
-import { Environment } from './types/environment.type';
 
 export class EnvironmentVariables {
   @IsEnum(Environment)
