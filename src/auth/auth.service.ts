@@ -11,6 +11,8 @@ import {
   RefreshTokenPayload,
 } from '../common/types/token-payload.type';
 import { User } from '../users/entities/user.entity';
+import ERROR_MESSAGES from 'src/common/enums/error.messgaes';
+
 
 @Injectable()
 export class AuthService {
@@ -24,22 +26,26 @@ export class AuthService {
 
   public async register(registrationData: RegisterDto) {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
+    console.log(hashedPassword);
+    
     try {
+      
       const createdUser = await this.usersService.create({
         ...registrationData,
         password: hashedPassword,
       });
-
+ 
       return createdUser;
     } catch (error) {
       if (error?.code === PostgresErrorCode.UniqueViolation) {
         throw new HttpException(
-          'User with that email or phone already exists',
+          ERROR_MESSAGES.USER_EXIST,
           HttpStatus.BAD_REQUEST,
         );
       }
+      console.error("Error creating user:", error);
       throw new HttpException(
-        'Something went wrong',
+        ERROR_MESSAGES.DATABASE_ERROR,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -55,7 +61,7 @@ export class AuthService {
     );
     if (!isPasswordMatching) {
       throw new HttpException(
-        'Wrong credentials provided',
+        ERROR_MESSAGES.WRONG_CREDENTIALS,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -78,7 +84,7 @@ export class AuthService {
     } catch (error) {
       this.logger.error(error);
       throw new HttpException(
-        'Wrong credentials provided',
+        ERROR_MESSAGES.WRONG_CREDENTIALS,
         HttpStatus.BAD_REQUEST,
       );
     }

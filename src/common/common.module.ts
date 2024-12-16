@@ -8,6 +8,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
+import { AuthorsModule } from 'src/authors/authors.module';
+import { BooksModule } from 'src/books/books.module';
+import { GenresModule } from 'src/genres/genres.module';
 
 @Module({
   controllers: [],
@@ -15,7 +18,10 @@ import { UsersModule } from 'src/users/users.module';
   imports: [
     AuthModule,
     UsersModule,
+    AuthorsModule,
     PassportModule,
+    BooksModule,
+    GenresModule,
     ConfigModule,
     JwtModule.register({}),
   ],

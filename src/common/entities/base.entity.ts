@@ -1,13 +1,14 @@
 import {
+  Column,
   CreateDateColumn,
   DeleteDateColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
+// is base entity more power for oop
 export class BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
@@ -17,4 +18,7 @@ export class BaseEntity {
 
   @DeleteDateColumn({ type: 'timestamp' })
   deletedAt: Date;
+
+  @Column({ nullable: true })
+    createdBy?: string;
 }
