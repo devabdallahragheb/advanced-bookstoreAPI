@@ -1,14 +1,17 @@
 # Advanced Bookstore API
+
  Develop a RESTful API for a bookstore application. The API will allow users
 to perform CRUD operations on books, authors, and genres. Additionally, users should
 be able to search for books by title, author, or genre.
 
 ## Features
+
 - CRUD operations for books, authors, genres, and users.
 - User authentication  with JWT.
 - Swagger/OpenAPI documentation.
   
 ## Requirements
+
 - Node.js with the NestJS framework.
 - TypeScript as the programming language.
 - PostgreSQL  as the relational database.
@@ -27,14 +30,20 @@ cd advanced-bookstoreAPI
 2.Create a .env file in the root directory based on the .env.example file:
 cp .env.example .env
 
-3. Start Docker containers (for PostgreSQL and Redis):
-   docker-compose up --build
+3.  Run with Docker (Optional)
+If you do not have PostgreSQL or Redis installed locally, you can run the application with Docker, which will automatically set up PostgreSQL, Redis, and the application container:
+docker-compose up --build
 
-4. Install dependencies:
+If you use Docker, skip the following steps (4 and 5).
+
+5. Install dependencies:
      npm install
-5. Start the server:
+   
+6. Start the server:
    npm run start:dev
+   
 6.Access the application:
+
 API: http://localhost:3000
 Swagger: http://localhost:3000/api-docs
 
@@ -83,8 +92,10 @@ Swagger: http://localhost:3000/api-docs
 }'
 
 ## Design
+
     Entity Relationship Diagram (ERD), class diagrams, and requirements are available in the design folder at the root of the repository.
     
 ##Postman Collection
+
 Access the Postman collection [here](https://orange-satellite-870733.postman.co/workspace/TDRA~912c536b-3f54-49d1-9ac4-014cca31bc3d/collection/27835951-4af1de32-f493-4950-abdc-aa1583f59c9c?action=share&creator=27835951)
  
