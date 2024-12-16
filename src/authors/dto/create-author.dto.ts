@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsString } from 'class-validator';
+import { IsDate, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateAuthorDto {
   @IsString()
@@ -18,6 +18,13 @@ export class CreateAuthorDto {
     description: 'The birth date of the author',
   })
   birthDate: Date;
+  @IsUUID()
+  @IsOptional()
+  @ApiProperty({
+    example: 'cb1e5729-0293-4605-83ae-b2cfac8c2b99',
+    description: 'The UUID of the user which create author',
+  })
+  createdBy?: string;
 }
 
 export default CreateAuthorDto;

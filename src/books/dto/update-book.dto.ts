@@ -3,15 +3,11 @@ import { Type } from 'class-transformer';
 import { IsDate, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UpdateBookDto {
+ 
   @IsString()
   @IsOptional()
   @ApiProperty({ example: 'Intro to Js', description: 'the book name' })
-  name: string;
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty({ example: 'Intro to Js', description: 'the book name' })
-  title: string;
+  title?: string;
 
   @IsString()
   @IsOptional()
@@ -19,7 +15,7 @@ export class UpdateBookDto {
     example: 'Intro to Js description',
     description: 'the book description',
   })
-  description: string;
+  description?: string;
 
   @IsOptional()
   @Type(() => Date)  
@@ -28,15 +24,15 @@ export class UpdateBookDto {
     example: '1990-01-20T00:00:00.000Z',  
     description: 'the publicationDate of this book is  ',
   })
-  publicationDate: Date;
+  publicationDate?: Date;
 
   @IsUUID()
   @IsOptional()
-  authorId: number;
+  authorId?: string;
 
   @IsUUID()
   @IsOptional()
-  genreId: number;
+  genreId?: string;
 }
 
 export default UpdateBookDto;

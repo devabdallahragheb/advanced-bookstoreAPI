@@ -8,7 +8,7 @@ export class Genre extends BaseEntity {
   @Index()
   public name: string;
 
-  @OneToMany(() => Book, (book) => book.genre)
+  @OneToMany(() => Book, (book) => book.genre,{ cascade:  ['remove'] })
   books: Book[];
 }
 

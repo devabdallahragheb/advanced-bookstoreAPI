@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsString, IsUUID } from 'class-validator';
+import { IsDate, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateBookDto {
   @IsString()
@@ -35,6 +35,13 @@ export class CreateBookDto {
     description: 'The UUID of the genre associated with the book',
   })
   genreId: string;
+  @IsUUID()
+  @IsOptional()
+  @ApiProperty({
+    example: 'cb1e5729-0293-4605-83ae-b2cfac8c2b99',
+    description: 'The UUID of the user which create book',
+  })
+  createdBy?: string;
 }
 
 export default CreateBookDto;

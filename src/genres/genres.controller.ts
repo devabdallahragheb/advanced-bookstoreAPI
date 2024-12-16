@@ -8,11 +8,10 @@ import {
   Param,
   Post,
   Put,
+  Request
 } from '@nestjs/common';
 
- 
 import { JwtAuthenticationGuard } from '../common/guards/jwt-authentication.guard';
-
 import PaginationParams from 'src/common/types/pagination-params.type';
 import {
   ApiBody,
@@ -24,34 +23,30 @@ import {
 } from '@nestjs/swagger';
 import { GenresService } from './genres.service';
 import GenreDto from './dto/genre.dto';
-import { log } from 'console';
- 
+
 @ApiTags('genres')
 @Controller({ path: 'genres', version: '1' })
 export class GenresController {
   constructor(private readonly genresService: GenresService) {}
 
-  @Post('')
-  @UseGuards(JwtAuthenticationGuard )
-
-  @ApiOperation({ summary: 'create genre' })
+  @Post()
+  @UseGuards(JwtAuthenticationGuard)
+  @ApiOperation({ summary: 'Create a new genre' })
   @ApiResponse({
     status: 201,
-    description: 'Return created genre object',
+    description: 'Genre successfully created',
   })
   @ApiBody({ type: GenreDto })
-  async create(@Body() dto: GenreDto) {
-    console.log("test");
-    
-    return this.genresService.create(dto);
+  async create(@Body() dto: GenreDto,@Request() req) {
+    return this.genresService.create(dto, req.user.id);
   }
 
-  @Get('')
+  @Get()
   @UseGuards(JwtAuthenticationGuard)
-  @ApiOperation({ summary: 'return list all genres' })
+  @ApiOperation({ summary: 'Get list of all genres' })
   @ApiResponse({
     status: 200,
-    description: 'Return all genres',
+    description: 'Genres retrieved successfully',
   })
   @ApiQuery({ type: PaginationParams })
   async list(@Query() query: PaginationParams) {
@@ -60,53 +55,53 @@ export class GenresController {
 
   @Delete(':id')
   @UseGuards(JwtAuthenticationGuard)
-  @ApiOperation({ summary: 'delete genre' })
+  @ApiOperation({ summary: 'Delete genre by ID' })
   @ApiResponse({
     status: 200,
-    description: 'genre deleted',
+    description: 'Genre successfully deleted',
   })
   @ApiParam({
     name: 'id',
-    description: 'The ID of the genre',
+    description: 'The ID of the genre to delete',
     type: String,
     example: '12345',
   })
-  delete(@Param('id') id: number) {
+  async delete(@Param('id') id: string) {
     return this.genresService.deleteOneById(id);
   }
 
   @Put(':id')
   @UseGuards(JwtAuthenticationGuard)
+  @ApiOperation({ summary: 'Update genre by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Genre successfully updated',
+  })
+  @ApiBody({ type: GenreDto })
   @ApiParam({
     name: 'id',
-    description: 'The ID of the genre',
+    description: 'The ID of the genre to update',
     type: String,
     example: '12345',
   })
-  @ApiOperation({ summary: 'update genre' })
-  @ApiResponse({
-    status: 201,
-    description: 'Return updated genre object',
-  })
-  @ApiBody({ type: GenreDto })
-  update(@Param('id') id: string, @Body() dto: GenreDto) {
+  async update(@Param('id') id: string, @Body() dto: GenreDto) {
     return this.genresService.update(id, dto);
   }
 
   @Get(':id')
   @UseGuards(JwtAuthenticationGuard)
+  @ApiOperation({ summary: 'Get genre by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Genre retrieved successfully',
+  })
   @ApiParam({
     name: 'id',
-    description: 'The ID of the genre',
+    description: 'The ID of the genre to retrieve',
     type: String,
     example: '12345',
   })
-  @ApiOperation({ summary: 'fetch genre' })
-  @ApiResponse({
-    status: 200,
-    description: 'Return genre object',
-  })
-  find(@Param('id') id: string) {
-    return this.genresService.find(id);
+  async findByID(@Param('id') id: string) {
+    return this.genresService.findByID(id);
   }
 }
