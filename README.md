@@ -30,7 +30,7 @@ cd advanced-bookstoreAPI
 2.Create a .env file in the root directory based on the .env.example file:
 cp .env.example .env
 
-3.  Run with Docker (Optional)
+3.Run with Docker (Optional)
    
 If you do not have PostgreSQL or Redis installed locally, you can run the application with Docker, which will automatically set up PostgreSQL, Redis, and the application container:
 docker-compose up --build
