@@ -23,14 +23,14 @@ Handle asynchronous tasks, such as sending notifications when a new book is adde
 Use Bull or BullMQ with Redis for task queues, and implement a worker to process queued tasks as described in the NestJS [Queues documentation](https://docs.nestjs.com/techniques/queues).
   
 ## Getting Started
-1.Clone the repository:
+1. Clone the repository:
 git clone https://github.com/devabdallahragheb/advanced-bookstoreAPI.git
 cd advanced-bookstoreAPI
 
-2.Create a .env file in the root directory based on the .env.example file:
+2. Create a .env file in the root directory based on the .env.example file:
 cp .env.example .env
 
-3.Run with Docker (Optional)
+3. Run with Docker (Optional)
    
 If you do not have PostgreSQL or Redis installed locally, you can run the application with Docker, which will automatically set up PostgreSQL, Redis, and the application container:
 docker-compose up --build
@@ -43,7 +43,7 @@ If you use Docker, skip the following steps (4 and 5).
 5. Start the server:
    npm run start:dev
    
-6.Access the application:
+6. Access the application:
 
 API: http://localhost:3000
 Swagger: http://localhost:3000/api-docs
