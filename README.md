@@ -33,6 +33,7 @@ cp .env.example .env
 3. Run with Docker (Optional)
    
 If you do not have PostgreSQL or Redis installed locally, you can run the application with Docker, which will automatically set up PostgreSQL, Redis, and the application container:
+
 docker-compose up --build
 
 If you use Docker, skip the following steps (4 and 5).
