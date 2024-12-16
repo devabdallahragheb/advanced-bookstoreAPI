@@ -11,8 +11,10 @@ import CreateAuthorDto from '../dto/create-author.dto';
 import UpdateAuthorDto from '../dto/update-author.dto';
 import PaginationParams from 'src/common/types/pagination-params.type';
 import { Repository } from 'typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 // vip we have a multi way to use integration test  but in this app i use the same db   but it's not good way  i use it for save  time only i prefed to use In-memory databases
+
 // Mock JwtAuthenticationGuard
 jest.mock('../../common/guards/jwt-authentication.guard', () => ({
   JwtAuthenticationGuard: jest.fn().mockImplementation(() => ({
@@ -34,16 +36,19 @@ describe('AuthorsController (e2e)', () => {
           secret: 'test-secret',
           signOptions: { expiresIn: '60s' },
         }),
-        TypeOrmModule.forRoot({
-          type: 'postgres',
-          host: 'localhost',
-          port: 5432,
-          username: 'admin',
-          password: 'password',
-          database: 'db_bookstore',
-          entities: [Author],
-          synchronize: true,
-        }),
+        TypeOrmModule.forRootAsync({
+          imports: [ConfigModule],
+          inject: [ConfigService],
+          useFactory: (configService: ConfigService) => ({
+            type: 'postgres',
+            host: configService.get<string>('POSTGRES_HOST'),
+            port: configService.get<number>('POSTGRES_PORT'),
+            username: configService.get<string>('POSTGRES_USER'),
+            password: configService.get<string>('POSTGRES_PASSWORD'),
+            database: configService.get<string>('POSTGRES_DB'),
+            entities: [Author],
+            synchronize: configService.get<boolean>('DB_SYNCHRONIZE'),
+          }),   }),
         TypeOrmModule.forFeature([Author]),
       ],
       controllers: [AuthorsController],
