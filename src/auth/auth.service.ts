@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 import { RegisterDto } from './dto/register.dto';
 import { UsersService } from '../users/users.service';
