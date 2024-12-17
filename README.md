@@ -63,23 +63,14 @@ The API documentation is available via Swagger. Once the server is running, navi
 ### **Users**
 #### Fetch All Users
 - **GET** `/api/v1/users/list`
-  - **Query Parameters**:
-    - `offset` *(required)*: Pagination offset (e.g., `1`)
-    - `limit` *(required)*: Pagination limit (e.g., `20`)
-  - **Response**:  
-    - `201`: List of users.
 
 #### Delete User by ID
 - **DELETE** `/api/v1/users/{id}`
   - **Path Parameters**:  
     - `id` *(required)*: The ID of the user to delete (e.g., `12345`)
-  - **Response**:  
-    - `200`: User deleted.
 
 #### Fetch User Profile
 - **GET** `/api/v1/users/profile`
-  - **Response**:  
-    - `200`: User profile object.
 
 #### Update User Profile
 - **PATCH** `/api/v1/users/profile`
@@ -93,9 +84,6 @@ The API documentation is available via Swagger. Once the server is running, navi
       "address": "string"
     }
     ```
-  - **Response**:  
-    - `200`: Updated user profile object.
-
 ---
 
 ### **Authentication**
@@ -112,8 +100,6 @@ The API documentation is available via Swagger. Once the server is running, navi
       "phone": "string"
     }
     ```
-  - **Response**:  
-    - `201`: Registered user object with access tokens.
 
 #### User Login
 - **POST** `/api/v1/auth/login`
@@ -124,19 +110,12 @@ The API documentation is available via Swagger. Once the server is running, navi
       "password": "string"
     }
     ```
-  - **Response**:  
-    - `201`: Logged-in user object with access tokens.
 
 #### User Logout
 - **POST** `/api/v1/auth/logout`
-  - **Response**:  
-    - `200`: User logged out successfully.
 
 #### Refresh User Token
 - **GET** `/api/v1/auth/refresh`
-  - **Response**:  
-    - `200`: New access token.
-
 ---
 
 ### **Authors**
@@ -151,24 +130,13 @@ The API documentation is available via Swagger. Once the server is running, navi
       "createdBy": "string"
     }
     ```
-  - **Response**:  
-    - `201`: Created author object.
-
 #### Get All Authors
 - **GET** `/api/v1/authors`
-  - **Query Parameters**:
-    - `offset` *(required)*: Pagination offset (e.g., `1`)
-    - `limit` *(required)*: Pagination limit (e.g., `20`)
-  - **Response**:  
-    - `200`: List of authors.
 
 #### Get Author by ID
 - **GET** `/api/v1/authors/{id}`
   - **Path Parameters**:  
     - `id` *(required)*: The ID of the author to retrieve (e.g., `12345`)
-  - **Response**:  
-    - `200`: Author object.
-
 #### Update Author by ID
 - **PUT** `/api/v1/authors/{id}`
   - **Path Parameters**:  
@@ -181,16 +149,10 @@ The API documentation is available via Swagger. Once the server is running, navi
       "birthDate": "string"
     }
     ```
-  - **Response**:  
-    - `200`: Updated author object.
-
 #### Delete Author by ID
 - **DELETE** `/api/v1/authors/{id}`
   - **Path Parameters**:  
     - `id` *(required)*: The ID of the author to delete (e.g., `12345`)
-  - **Response**:  
-    - `200`: Author deleted.
-
 ---
 
 ### **Genres**
@@ -203,23 +165,15 @@ The API documentation is available via Swagger. Once the server is running, navi
       "createdBy": "string"
     }
     ```
-  - **Response**:  
-    - `201`: Created genre object.
 
 #### Get All Genres
 - **GET** `/api/v1/genres`
-  - **Query Parameters**:
-    - `offset` *(required)*: Pagination offset (e.g., `1`)
-    - `limit` *(required)*: Pagination limit (e.g., `20`)
-  - **Response**:  
-    - `200`: List of genres.
 
 #### Get Genre by ID
 - **GET** `/api/v1/genres/{id}`
   - **Path Parameters**:  
     - `id` *(required)*: The ID of the genre to retrieve (e.g., `12345`)
-  - **Response**:  
-    - `200`: Genre object.
+
 
 #### Update Genre by ID
 - **PUT** `/api/v1/genres/{id}`
@@ -231,16 +185,11 @@ The API documentation is available via Swagger. Once the server is running, navi
       "name": "string"
     }
     ```
-  - **Response**:  
-    - `200`: Updated genre object.
 
 #### Delete Genre by ID
 - **DELETE** `/api/v1/genres/{id}`
   - **Path Parameters**:  
     - `id` *(required)*: The ID of the genre to delete (e.g., `12345`)
-  - **Response**:  
-    - `200`: Genre deleted.
-
 ---
 
 ### **Books**
@@ -257,23 +206,14 @@ The API documentation is available via Swagger. Once the server is running, navi
       "createdBy": "string"
     }
     ```
-  - **Response**:  
-    - `201`: Created book object.
 
 #### Get All Books
 - **GET** `/api/v1/books`
-  - **Query Parameters**:
-    - `offset` *(required)*: Pagination offset (e.g., `1`)
-    - `limit` *(required)*: Pagination limit (e.g., `20`)
-  - **Response**:  
-    - `200`: List of books.
 
 #### Get Book by ID
 - **GET** `/api/v1/books/{id}`
   - **Path Parameters**:  
     - `id` *(required)*: The ID of the book to retrieve (e.g., `12345`)
-  - **Response**:  
-    - `200`: Book object.
 
 #### Update Book by ID
 - **PUT** `/api/v1/books/{id}`
@@ -287,15 +227,11 @@ The API documentation is available via Swagger. Once the server is running, navi
       "publicationDate": "string"
     }
     ```
-  - **Response**:  
-    - `200`: Updated book object.
 
 #### Delete Book by ID
 - **DELETE** `/api/v1/books/{id}`
   - **Path Parameters**:  
     - `id` *(required)*: The ID of the book to delete (e.g., `12345`)
-  - **Response**:  
-    - `200`: Book deleted.
 
 POST /auth/login: Log in and obtain a JWT token.
 
